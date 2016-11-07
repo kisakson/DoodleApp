@@ -33,15 +33,24 @@ public class DoodleView extends View {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-        _paintDoodle.setColor(Color.BLACK);
         _paintDoodle.setAntiAlias(true);
         _paintDoodle.setStyle(Paint.Style.STROKE);
+    }
+
+    public void setPaint(int size, int hue, int saturation, int brightness) {
+        Color color = new Color();
+        float[] hsb = new float[3];
+        hsb[0] = hue;
+        hsb[1] = (float) saturation/256;
+        hsb[2] = (float) brightness/256;
+        _paintDoodle.setColor(color.HSVToColor(hsb));
+        _paintDoodle.setStrokeWidth(size);
+        _paintDoodle.setAlpha(255);
     }
 
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         canvas.drawPath(_path, _paintDoodle);
     }
 
