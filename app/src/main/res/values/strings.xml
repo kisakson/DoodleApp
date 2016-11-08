@@ -8,5 +8,8 @@
     <string name="saturation">Saturation</string>
     <string name="opacity">Opacity</string>
     <string name="ok">OK</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+
     <string name="title_activity_settings">Settings</string>
 </resources>

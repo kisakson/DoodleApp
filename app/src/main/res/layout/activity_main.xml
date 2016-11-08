@@ -15,7 +15,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
-        android:layout_above="@+id/buttonSettings" />
+        android:layout_above="@+id/buttonUndo"
+        android:layout_marginBottom="11dp" />
+
+    <Button
+        android:text="@string/redo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonRedo"
+        android:width="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/undo"
+        android:id="@+id/buttonUndo"
+        android:width="100dp"
+        android:layout_above="@+id/buttonRedo"
+        android:layout_alignLeft="@+id/buttonRedo"
+        android:layout_alignStart="@+id/buttonRedo" />
 
     <Button
         android:text="@string/clear"
@@ -23,11 +43,12 @@
         android:layout_height="wrap_content"
         android:id="@+id/buttonClear"
         android:width="100dp"
-        android:layout_marginRight="45dp"
-        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="22dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_toRightOf="@+id/buttonUndo"
+        android:layout_toEndOf="@+id/buttonUndo"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -35,10 +56,11 @@
         android:text="@string/settings"
         android:id="@+id/buttonSettings"
         android:width="100dp"
-        android:layout_marginLeft="49dp"
-        android:layout_marginStart="49dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignBaseline="@+id/buttonClear"
+        android:layout_alignBottom="@+id/buttonClear"
+        android:layout_toLeftOf="@+id/buttonRedo"
+        android:layout_toStartOf="@+id/buttonRedo"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp" />
 
 </RelativeLayout>

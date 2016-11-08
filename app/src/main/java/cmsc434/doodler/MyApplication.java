@@ -16,7 +16,8 @@ public class MyApplication extends Application {
     private int brightness;
     private int saturation;
     private int opacity;
-    private int numPaths;
+    private int numPaths; // Current number of paths to display
+    private int maxPaths; // Total number of paths that can be displayed through redoing
 
     public void onCreate() {
         super.onCreate();
@@ -27,6 +28,7 @@ public class MyApplication extends Application {
         saturation = 0;
         opacity = 255;
         numPaths = 0;
+        maxPaths = 0;
     }
 
     public static MyApplication getStaticApplicationContext() {
@@ -95,5 +97,13 @@ public class MyApplication extends Application {
 
     public void setNumPaths(int numPaths) {
         this.numPaths = numPaths;
+    }
+
+    public int getMaxPaths() {
+        return maxPaths;
+    }
+
+    public void setMaxPaths(int maxPaths) {
+        this.maxPaths = maxPaths;
     }
 }

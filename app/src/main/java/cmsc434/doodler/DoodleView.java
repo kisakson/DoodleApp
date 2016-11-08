@@ -14,15 +14,12 @@ import java.util.ArrayList;
 
 public class DoodleView extends View {
 
-    private Paint _paintDoodle = new Paint(); // Current value
-    private Path _path = new Path(); // Current value
+    private Paint _paintDoodle = new Paint();
+    private Path _path = new Path();
     private ArrayList<Paint> _paints = new ArrayList<Paint>();
     private ArrayList<Path> _paths = new ArrayList<Path>();
-    // TODO store int that is number of paths to draw
-    // TODO works with undo and redo functionality
-    // TODO add to arraylist at position i+1
-    // TODO undo: set i to i--
-    // TODO redo: set i to i++
+    private int numPaths;
+    private int maxPaths;
 
     public DoodleView(Context context) {
         super(context);
@@ -57,12 +54,25 @@ public class DoodleView extends View {
         _paintDoodle.setAlpha(opacity);
     }
 
+    public void setUndoRedo(int numPaths, int maxPaths) {
+        this.numPaths = numPaths;
+        this.maxPaths = maxPaths;
+    }
+
     public ArrayList<Paint> getPaints() {
         return _paints;
     }
 
     public ArrayList<Path> getPaths() {
         return _paths;
+    }
+
+    public int getNumPaths() {
+        return numPaths;
+    }
+
+    public int getMaxPaths() {
+        return maxPaths;
     }
 
     public void recreateDrawings(ArrayList<Paint> paints, ArrayList<Path> paths) {
@@ -73,13 +83,29 @@ public class DoodleView extends View {
     public void clear() {
         _paints = new ArrayList<Paint>();
         _paths = new ArrayList<Path>();
+        numPaths = 0;
+        maxPaths = 0;
         invalidate();
+    }
+
+    public void undo() {
+        if (numPaths > 0) {
+            numPaths--;
+            invalidate();
+        }
+    }
+
+    public void redo() {
+        if (numPaths < maxPaths) {
+            numPaths++;
+            invalidate();
+        }
     }
 
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        for (int i = 0; i < _paths.size(); i++) {
+        for (int i = 0; i < numPaths; i++) {
             canvas.drawPath(_paths.get(i), _paints.get(i));
         }
         canvas.drawPath(_path, _paintDoodle);
@@ -97,11 +123,14 @@ public class DoodleView extends View {
                 _path.lineTo(touchX, touchY);
                 break;
             case MotionEvent.ACTION_UP:
-                _paints.add(_paintDoodle);
-                _paths.add(_path);
+                _paints.add(numPaths, _paintDoodle);
+                _paths.add(numPaths, _path);
+                numPaths++;
+                maxPaths = numPaths;
+                MyApplication.getStaticApplicationContext().setNumPaths(numPaths);
+                MyApplication.getStaticApplicationContext().setMaxPaths(maxPaths);
                 _path = new Path();
         }
-
         invalidate();
         return true;
     }

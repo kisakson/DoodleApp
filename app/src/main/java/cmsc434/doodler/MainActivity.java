@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     private int brightness;
     private int saturation;
     private int opacity;
+    private int numPaths;
+    private int maxPaths;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
         brightness = MyApplication.getStaticApplicationContext().getBrightness();
         saturation = MyApplication.getStaticApplicationContext().getSaturation();
         opacity = MyApplication.getStaticApplicationContext().getOpacity();
+        numPaths = MyApplication.getStaticApplicationContext().getNumPaths();
+        maxPaths = MyApplication.getStaticApplicationContext().getMaxPaths();
 
         Intent gotIntent = getIntent();
         if (gotIntent != null && gotIntent.getStringExtra("toastMessage") != null) {
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         final DoodleView doodleView = (DoodleView) findViewById(R.id.doodleView);
         doodleView.setPaint(size, hue, saturation, brightness, opacity);
+        doodleView.setUndoRedo(numPaths, maxPaths);
         ArrayList<Paint> paints = MyApplication.getStaticApplicationContext().getPaints();
         ArrayList<Path> paths = MyApplication.getStaticApplicationContext().getPaths();
         if (paints != null && paths != null) {
@@ -54,6 +59,12 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<Path> paths = doodleView.getPaths();
                 MyApplication.getStaticApplicationContext().setPaints(paints);
                 MyApplication.getStaticApplicationContext().setPaths(paths);
+                MyApplication.getStaticApplicationContext().setNumPaths(
+                        doodleView.getNumPaths()
+                );
+                MyApplication.getStaticApplicationContext().setMaxPaths(
+                        doodleView.getMaxPaths()
+                );
                 Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
                 MainActivity.this.startActivity(myIntent);
                 finish();
@@ -79,6 +90,22 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setMessage("Are you sure? This cannot be undone.").setPositiveButton("Yes", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
+            }
+        });
+
+        Button buttonUndo = (Button) findViewById(R.id.buttonUndo);
+        buttonUndo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doodleView.undo();
+            }
+        });
+
+        Button buttonRedo = (Button) findViewById(R.id.buttonRedo);
+        buttonRedo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doodleView.redo();
             }
         });
     }
