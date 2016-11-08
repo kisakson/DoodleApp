@@ -2,14 +2,10 @@ package cmsc434.doodler;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -17,31 +13,43 @@ public class SettingsActivity extends AppCompatActivity {
     int hue;
     int brightness;
     int saturation;
-    //int opacity = 0;
+    int opacity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        Intent intentValues = getIntent();
-        Bundle bundleValues = intentValues.getExtras();
-        size = bundleValues.getInt("size");
-        hue = bundleValues.getInt("hue");
-        brightness = bundleValues.getInt("brightness");
-        saturation = bundleValues.getInt("saturation");
+        size = MyApplication.getStaticApplicationContext().getSize();
+        hue = MyApplication.getStaticApplicationContext().getHue();
+        brightness = MyApplication.getStaticApplicationContext().getBrightness();
+        saturation = MyApplication.getStaticApplicationContext().getSaturation();
+        opacity = MyApplication.getStaticApplicationContext().getOpacity();
 
-        Button buttonSettings = (Button) findViewById(R.id.buttonOK);
-        buttonSettings.setOnClickListener(new View.OnClickListener() {
+        final PaintView paintView = (PaintView) findViewById(R.id.paintView);
+        paintView.updatePaint(size, hue, saturation, brightness, opacity);
+
+        Button buttonOK = (Button) findViewById(R.id.buttonOK);
+        buttonOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(SettingsActivity.this, MainActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("size", size);
-                bundle.putInt("hue", hue);
-                bundle.putInt("brightness", brightness);
-                bundle.putInt("saturation", saturation);
-                myIntent.putExtras(bundle);
+                MyApplication.getStaticApplicationContext().setSize(size);
+                MyApplication.getStaticApplicationContext().setHue(hue);
+                MyApplication.getStaticApplicationContext().setBrightness(brightness);
+                MyApplication.getStaticApplicationContext().setSaturation(saturation);
+                MyApplication.getStaticApplicationContext().setOpacity(opacity);
+                myIntent.putExtra("toastMessage", "Brush updated.");
+                SettingsActivity.this.startActivity(myIntent);
+                finish();
+            }
+        });
+
+        Button buttonCancel = (Button) findViewById(R.id.buttonCancel);
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(SettingsActivity.this, MainActivity.class);
                 SettingsActivity.this.startActivity(myIntent);
                 finish();
             }
@@ -53,16 +61,12 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 size = i;
+                paintView.updatePaint(size, hue, saturation, brightness, opacity);
             }
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // do anything?
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) { }
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(SettingsActivity.this,"Size is now " + size,
-                        Toast.LENGTH_SHORT).show();
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
         SeekBar seekHue = (SeekBar) findViewById(R.id.seekBarHue);
@@ -71,16 +75,12 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 hue = i;
+                paintView.updatePaint(size, hue, saturation, brightness, opacity);
             }
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // do anything?
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) { }
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(SettingsActivity.this,"Hue is now " + hue,
-                        Toast.LENGTH_SHORT).show();
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
         SeekBar seekBright = (SeekBar) findViewById(R.id.seekBarBright);
@@ -89,16 +89,12 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 brightness = i;
+                paintView.updatePaint(size, hue, saturation, brightness, opacity);
             }
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // do anything?
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) { }
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(SettingsActivity.this,"Brightness is now " + brightness,
-                        Toast.LENGTH_SHORT).show();
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
         SeekBar seekSatr = (SeekBar) findViewById(R.id.seekBarSatr);
@@ -107,16 +103,26 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 saturation = i;
+                paintView.updatePaint(size, hue, saturation, brightness, opacity);
             }
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // do anything?
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
+
+        SeekBar seekOpac = (SeekBar) findViewById(R.id.seekBarOpac);
+        seekOpac.setProgress(opacity);
+        seekOpac.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                opacity = i;
+                paintView.updatePaint(size, hue, saturation, brightness, opacity);
             }
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(SettingsActivity.this,"Saturation is now " + saturation,
-                        Toast.LENGTH_SHORT).show();
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
         });
     }
 

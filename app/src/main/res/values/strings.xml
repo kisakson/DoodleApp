@@ -6,6 +6,7 @@
     <string name="hue">Hue</string>
     <string name="brightness">Brightness</string>
     <string name="saturation">Saturation</string>
+    <string name="opacity">Opacity</string>
     <string name="ok">OK</string>
     <string name="title_activity_settings">Settings</string>
 </resources>

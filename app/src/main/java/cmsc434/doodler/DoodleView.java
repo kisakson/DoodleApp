@@ -5,17 +5,24 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-/**
- * Created by kara on 11/2/2016.
- */
+import java.util.ArrayList;
+
 public class DoodleView extends View {
 
-    private Paint _paintDoodle = new Paint();
-    private Path _path = new Path();
+    private Paint _paintDoodle = new Paint(); // Current value
+    private Path _path = new Path(); // Current value
+    private ArrayList<Paint> _paints = new ArrayList<Paint>();
+    private ArrayList<Path> _paths = new ArrayList<Path>();
+    // TODO store int that is number of paths to draw
+    // TODO works with undo and redo functionality
+    // TODO add to arraylist at position i+1
+    // TODO undo: set i to i--
+    // TODO redo: set i to i++
 
     public DoodleView(Context context) {
         super(context);
@@ -35,9 +42,11 @@ public class DoodleView extends View {
     private void init(AttributeSet attrs, int defStyle) {
         _paintDoodle.setAntiAlias(true);
         _paintDoodle.setStyle(Paint.Style.STROKE);
+        _paintDoodle.setStrokeCap(Paint.Cap.ROUND);
+        _paintDoodle.setStrokeJoin(Paint.Join.ROUND);
     }
 
-    public void setPaint(int size, int hue, int saturation, int brightness) {
+    public void setPaint(int size, int hue, int saturation, int brightness, int opacity) {
         Color color = new Color();
         float[] hsb = new float[3];
         hsb[0] = hue;
@@ -45,12 +54,34 @@ public class DoodleView extends View {
         hsb[2] = (float) brightness/256;
         _paintDoodle.setColor(color.HSVToColor(hsb));
         _paintDoodle.setStrokeWidth(size);
-        _paintDoodle.setAlpha(255);
+        _paintDoodle.setAlpha(opacity);
+    }
+
+    public ArrayList<Paint> getPaints() {
+        return _paints;
+    }
+
+    public ArrayList<Path> getPaths() {
+        return _paths;
+    }
+
+    public void recreateDrawings(ArrayList<Paint> paints, ArrayList<Path> paths) {
+        _paints = paints;
+        _paths = paths;
+    }
+
+    public void clear() {
+        _paints = new ArrayList<Paint>();
+        _paths = new ArrayList<Path>();
+        invalidate();
     }
 
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        for (int i = 0; i < _paths.size(); i++) {
+            canvas.drawPath(_paths.get(i), _paints.get(i));
+        }
         canvas.drawPath(_path, _paintDoodle);
     }
 
@@ -66,7 +97,9 @@ public class DoodleView extends View {
                 _path.lineTo(touchX, touchY);
                 break;
             case MotionEvent.ACTION_UP:
-                break;
+                _paints.add(_paintDoodle);
+                _paths.add(_path);
+                _path = new Path();
         }
 
         invalidate();
